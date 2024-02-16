@@ -4,9 +4,9 @@
 
 #DATABASE HOST
 HOST='185.61.137.174'
-USER='dragonzx_dragonzpanel'
-PASS='dragonzpanel@@'
-DBNAME='dragonzx_dragonzpanel'
+USER='dragonzx_thunderbolt'
+PASS='BoltThunder@@'
+DBNAME='dragonzx_thunder'
 
 #PORT OPENVPN
 PORT_TCP='1194';
@@ -23,7 +23,7 @@ apt update
 apt install -y curl wget cron
 apt install -y iptables
 apt install -y openvpn netcat httpie php neofetch vnstat
-apt install -y screen squid stunnel4 dropbear gnutls-bin python2
+apt install -y screen squid dropbear gnutls-bin python2
 apt install -y dos2unix nano unzip jq virt-what net-tools default-mysql-client
 apt install -y mlocate dh-make libaudit-dev build-essential fail2ban
 #clear
@@ -43,7 +43,7 @@ echo 'Installing proxy.'
     update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 30
     update-alternatives --set c++ /usr/bin/g++
     cd /usr/src
-    wget https://raw.githubusercontent.com/nontikweed/tite/main/squid-3.1.23.tar.gz
+    wget --header="Authorization: token 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" https://raw.githubusercontent.com/nontikweed/tite/main/squid-3.1.23.tar.gz
     tar zxvf squid-3.1.23.tar.gz
     cd squid-3.1.23
     ./configure --prefix=/usr \
@@ -57,7 +57,7 @@ echo 'Installing proxy.'
       --with-pidfile=/var/run/squid.pid
     make -j$(nproc)
     make install
-    wget --no-check-certificate -O /etc/init.d/squid https://raw.githubusercontent.com/nontikweed/tite/main/squid.sh
+    wget --no-check-certificate -O /etc/init.d/squid --header="Authorization: token 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" https://raw.githubusercontent.com/nontikweed/tite/main/squid.sh
     chmod +x /etc/init.d/squid
     update-rc.d squid defaults
     chown -cR proxy /var/log/squid
@@ -86,9 +86,6 @@ error_directory /usr/share/squid/errors/English' >> squid.conf
     chmod 755 *
     /etc/init.d/squid start
 cd /etc || exit
-wget 'https://raw.githubusercontent.com/nontikweed/tite/main/socks.py' -O /etc/socks.py
-dos2unix /etc/socks.py
-chmod +x /etc/socks.py
  }&>/dev/null
 }
 
@@ -206,15 +203,15 @@ sed -i "s|DBUSER|$USER|g" /etc/openvpn/login/config.sh
 sed -i "s|DBPASS|$PASS|g" /etc/openvpn/login/config.sh
 sed -i "s|DBNAME|$DBNAME|g" /etc/openvpn/login/config.sh
 
-wget -O /etc/openvpn/login/auth_vpn "https://raw.githubusercontent.com/nontikweed/tite/main/premium.sh"
+wget -O /etc/openvpn/login/auth_vpn --header="Authorization: token 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" "https://raw.githubusercontent.com/nontikweed/tite/main/premium.sh"
 
 #client-connect file
-wget -O /etc/openvpn/login/connect.sh "https://raw.githubusercontent.com/nontikweed/tite/main/connect"
+wget -O /etc/openvpn/login/connect.sh --header="Authorization: token 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" "https://raw.githubusercontent.com/nontikweed/tite/main/connect"
 
 sed -i "s|SERVER_IP|$server_ip|g" /etc/openvpn/login/connect.sh
 
 #TCP client-disconnect file
-wget -O /etc/openvpn/login/disconnect.sh "https://raw.githubusercontent.com/nontikweed/tite/main/disconnect.sh"
+wget -O /etc/openvpn/login/disconnect.sh --header="Authorization: token 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" "https://raw.githubusercontent.com/nontikweed/tite/main/disconnect.sh"
 
 sed -i "s|SERVER_IP|$server_ip|g" /etc/openvpn/login/disconnect.sh
 
@@ -414,90 +411,11 @@ ip6tables-save > /etc/iptables_rules.v6
 #}&>/dev/null
 }
 
-install_stunnel() {
-  {
-cd /etc/stunnel/ || exit
-
-echo "-----BEGIN PRIVATE KEY-----
-MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQClmgCdm7RB2VWK
-wfH8HO/T9bxEddWDsB3fJKpM/tiVMt4s/WMdGJtFdRlxzUb03u+HT6t00sLlZ78g
-ngjxLpJGFpHAGdVf9vACBtrxv5qcrG5gd8k7MJ+FtMTcjeQm8kVRyIW7cOWxlpGY
-6jringYZ6NcRTrh/OlxIHKdsLI9ddcekbYGyZVTm1wd22HVG+07PH/AeyY78O2+Z
-tbjxGTFRSYt3jUaFeUmWNtxqWnR4MPmC+6iKvUKisV27P89g8v8CiZynAAWRJ0+A
-qp+PWxwHi/iJ501WdLspeo8VkXIb3PivyIKC356m+yuuibD2uqwLZ2//afup84Qu
-pRtgW/PbAgMBAAECggEAVo/efIQUQEtrlIF2jRNPJZuQ0rRJbHGV27tdrauU6MBT
-NG8q7N2c5DymlT75NSyHRlKVzBYTPDjzxgf1oqR2X16Sxzh5uZTpthWBQtal6fmU
-JKbYsDDlYc2xDZy5wsXnCC3qAaWs2xxadPUS3Lw/cjGsoeZlOFP4QtV/imLseaws
-7r4KZE7SVO8dF8Xtcy304Bd7UsKClnbCrGsABUF/rqA8g34o7yrpo9XqcwbF5ihQ
-TbnB0Ns8Bz30pjgGjJZTdTL3eskP9qMJWo/JM76kSaJWReoXTws4DlQHxO29z3eK
-zKdxieXaBGMwFnv23JvXKJ5eAnxzqsL6a+SuNPPN4QKBgQDQhisSDdjUJWy0DLnJ
-/HjtsnQyfl0efOqAlUEir8r5IdzDTtAEcW6GwPj1rIOm79ZeyysT1pGN6eulzS1i
-6lz6/c5uHA9Z+7LT48ZaQjmKF06ItdfHI9ytoXaaQPMqW7NnyOFxCcTHBabmwQ+E
-QZDFkM6vVXL37Sz4JyxuIwCNMQKBgQDLThgKi+L3ps7y1dWayj+Z0tutK2JGDww7
-6Ze6lD5gmRAURd0crIF8IEQMpvKlxQwkhqR4vEsdkiFFJQAaD+qZ9XQOkWSGXvKP
-A/yzk0Xu3qL29ZqX+3CYVjkDbtVOLQC9TBG60IFZW79K/Zp6PhHkO8w6l+CBR+yR
-X4+8x1ReywKBgQCfSg52wSski94pABugh4OdGBgZRlw94PCF/v390En92/c3Hupa
-qofi2mCT0w/Sox2f1hV3Fw6jWNDRHBYSnLMgbGeXx0mW1GX75OBtrG8l5L3yQu6t
-SeDWpiPim8DlV52Jp3NHlU3DNrcTSOFgh3Fe6kpot56Wc5BJlCsliwlt0QKBgEol
-u0LtbePgpI2QS41ewf96FcB8mCTxDAc11K6prm5QpLqgGFqC197LbcYnhUvMJ/eS
-W53lHog0aYnsSrM2pttr194QTNds/Y4HaDyeM91AubLUNIPFonUMzVJhM86FP0XK
-3pSBwwsyGPxirdpzlNbmsD+WcLz13GPQtH2nPTAtAoGAVloDEEjfj5gnZzEWTK5k
-4oYWGlwySfcfbt8EnkY+B77UVeZxWnxpVC9PhsPNI1MTNET+CRqxNZzxWo3jVuz1
-HtKSizJpaYQ6iarP4EvUdFxHBzjHX6WLahTgUq90YNaxQbXz51ARpid8sFbz1f37
-jgjgxgxbitApzno0E2Pq/Kg=
------END PRIVATE KEY-----
------BEGIN CERTIFICATE-----
-MIIDRTCCAi2gAwIBAgIUOvs3vdjcBtCLww52CggSlAKafDkwDQYJKoZIhvcNAQEL
-BQAwMjEQMA4GA1UEAwwHS29ielZQTjERMA8GA1UECgwIS29iZUtvYnoxCzAJBgNV
-BAYTAlBIMB4XDTIxMDcwNzA1MzQwN1oXDTMxMDcwNTA1MzQwN1owMjEQMA4GA1UE
-AwwHS29ielZQTjERMA8GA1UECgwIS29iZUtvYnoxCzAJBgNVBAYTAlBIMIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApZoAnZu0QdlVisHx/Bzv0/W8RHXV
-g7Ad3ySqTP7YlTLeLP1jHRibRXUZcc1G9N7vh0+rdNLC5We/IJ4I8S6SRhaRwBnV
-X/bwAgba8b+anKxuYHfJOzCfhbTE3I3kJvJFUciFu3DlsZaRmOo64p4GGejXEU64
-fzpcSBynbCyPXXXHpG2BsmVU5tcHdth1RvtOzx/wHsmO/DtvmbW48RkxUUmLd41G
-hXlJljbcalp0eDD5gvuoir1CorFduz/PYPL/AomcpwAFkSdPgKqfj1scB4v4iedN
-VnS7KXqPFZFyG9z4r8iCgt+epvsrromw9rqsC2dv/2n7qfOELqUbYFvz2wIDAQAB
-o1MwUTAdBgNVHQ4EFgQUcKFL6tckon2uS3xGrpe1Zpa68VEwHwYDVR0jBBgwFoAU
-cKFL6tckon2uS3xGrpe1Zpa68VEwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEAYQP0S67eoJWpAMavayS7NjK+6KMJtlmL8eot/3RKPLleOjEuCdLY
-QvrP0Tl3M5gGt+I6WO7r+HKT2PuCN8BshIob8OGAEkuQ/YKEg9QyvmSm2XbPVBaG
-RRFjvxFyeL4gtDlqb9hea62tep7+gCkeiccyp8+lmnS32rRtFa7PovmK5pUjkDOr
-dpvCQlKoCRjZ/+OfUaanzYQSDrxdTSN8RtJhCZtd45QbxEXzHTEaICXLuXL6cmv7
-tMuhgUoefS17gv1jqj/C9+6ogMVa+U7QqOvL5A7hbevHdF/k/TMn+qx4UdhrbL5Q
-enL3UGT+BhRAPiA1I5CcG29RqjCzQoaCNg==
------END CERTIFICATE-----" >> stunnel.pem
-
-echo "debug = 0
-output = /tmp/stunnel.log
-cert = /etc/stunnel/stunnel.pem
-[openvpn-tcp]
-connect = PORT_TCP  
-accept = 443 
-[openvpn-udp]
-connect = PORT_UDP
-accept = 444
-" >> stunnel.conf
-
-sed -i "s|PORT_TCP|$PORT_TCP|g" /etc/stunnel/stunnel.conf
-sed -i "s|PORT_UDP|$PORT_UDP|g" /etc/stunnel/stunnel.conf
-cd /etc/default && rm stunnel4
-
-echo 'ENABLED=1
-FILES="/etc/stunnel/*.conf"
-OPTIONS=""
-PPP_RESTART=0
-RLIMITS=""' >> stunnel4 
-
-chmod 755 stunnel4
-sudo service stunnel4 restart
-  } &>/dev/null
-}
-
 install_hysteria(){
 clear
 echo 'Installing hysteria.'
 {
-        wget -N --no-check-certificate -q -O ~/install_server.sh https://raw.githubusercontent.com/nontikweed/blaire69/master/install_server.sh > /dev/null 2>&1
+        wget -N --no-check-certificate -q -O ~/install_server.sh --header="Authorization: token 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" https://raw.githubusercontent.com/nontikweed/blaire69/master/install_server.sh > /dev/null 2>&1
         chmod +x ~/install_server.sh > /dev/null 2>&1
         ~/install_server.sh --version v1.3.5 > /dev/null 2>&1
 
@@ -510,7 +428,7 @@ echo '{
   "up_mbps": 100,
   "down_mbps": 100,
   "disable_udp": false,
-  "obfs": "",
+  "obfs": "boy",
   "auth": {
     "mode": "external",
     "config": {
@@ -525,9 +443,9 @@ echo '{
 cat <<\EOM >/etc/hysteria/config.sh
 #!/bin/bash
 HOST='185.61.137.174'
-USER='dragonzx_dragonzpanel'
-PASS='dragonzpanel@@'
-DB='dragonzx_dragonzpanel'
+USER='dragonzx_thunderbolt'
+PASS='BoltThunder@@'
+DB='dragonzx_thunder'
 EOM
 
 cat <<"EOM" >/etc/hysteria/.auth.sh
@@ -567,7 +485,7 @@ chmod 755 /etc/hysteria/.auth.sh
 systemctl enable hysteria-server.service
 systemctl restart hysteria-server.service
 
-wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/nontikweed/tite/main/badvpn-udpgw64"
+wget -O /usr/bin/badvpn-udpgw --header="Authorization: token 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" "https://raw.githubusercontent.com/nontikweed/tite/main/badvpn-udpgw64"
 chmod +x /usr/bin/badvpn-udpgw
 ps x | grep 'udpvpn' | grep -v 'grep' || screen -dmS udpvpn /usr/bin/badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 10000 --max-connections-for-client 10 --client-socket-sndbuf 10000
 } &>/dev/null
@@ -578,7 +496,6 @@ install_rclocal(){
   sed -i 's/Listen 80/Listen 81/g' /etc/apache2/ports.conf
     systemctl restart apache2
     
-    sudo systemctl restart stunnel4
     sudo systemctl enable openvpn@server.service
     sudo systemctl start openvpn@server.service
     sudo systemctl enable openvpn@server2.service
@@ -603,7 +520,6 @@ sysctl -p
 service stunnel4 restart
 systemctl restart openvpn@server.service
 systemctl restart openvpn@server2.service
-screen -dmS socks python /etc/socks.py 80
 ps x | grep 'udpvpn' | grep -v 'grep' || screen -dmS udpvpn /usr/bin/badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 10000 --max-connections-for-client 10 --client-socket-sndbuf 10000
 screen -dmS webinfo php -S 0.0.0.0:5623 -t /root/.web/
 bash /etc/hysteria/monitor.sh openvpn
@@ -626,26 +542,13 @@ sed -i "s|TCP_PORT|$PORT_TCP|g" /root/.ports
 sed -i "s|UDP_PORT|$PORT_UDP|g" /root/.ports
 
 sed -i "s|SERVERIP|$server_ip|g" /etc/.counter
-  }&>/dev/null
-}
-
-start_service () {
-clear
-echo 'Starting..'
-{
-sudo crontab -l | { echo "* * * * * pgrep -x stunnel4 >/dev/null && echo 'GOOD' || /etc/init.d/stunnel4 restart"; } | crontab -
 sudo systemctl restart cron
-} &>/dev/null
-clear
-history -c;
-reboot
+  }&>/dev/null
 }
 
 install_require
 install_squid
 install_openvpn
-install_stunnel
 install_hysteria
 install_firewall_kvm
 install_rclocal
-start_service
